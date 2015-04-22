@@ -7,13 +7,24 @@
 
 const int buzzerPin = 8;
 const int songLength = 18;
-char notes[] = "cdfda ag cdfdg gf ";
+char notes[] = "cdfda ag cdfdg gf "; // a space represents a rest
 int beats[] = {1,1,1,1,1,1,4,4,2,1,1,1,1,1,1,4,4,2};
 int tempo = 150;
 
-void allThatJunk()
+void setup()
 {
-    int i, duration;
+    vw_set_ptt_inverted(true); // Required for DR3100
+    vw_set_rx_pin(12);
+    vw_setup(300);  // Bits per sec
+    pinMode(13, OUTPUT);
+    pinMode(buzzerPin, OUTPUT);
+
+    vw_rx_start();       // Start the receiver PLL running
+}
+
+void allThatJunk() 
+{
+  int i, duration;
   
   for (i = 0; i < songLength; i++) // step through the song arrays
   {
@@ -37,16 +48,6 @@ void allThatJunk()
   // remove the above statement
 }
 
-#include <VirtualWire.h>
-void setup()
-{
-    vw_set_ptt_inverted(true); // Required for DR3100
-    vw_set_rx_pin(12);
-    vw_setup(4000);  // Bits per sec
-    pinMode(13, OUTPUT);
-
-    vw_rx_start();       // Start the receiver PLL running
-}
     void loop()
 {
     uint8_t buf[VW_MAX_MESSAGE_LEN];
@@ -54,18 +55,14 @@ void setup()
 
     if (vw_get_message(buf, &buflen)) // Non-blocking
     {
-      if(buf[0]=='1'){
-
-  
-   digitalWrite(13,1);
-      }  
-   if(buf[0]=='0'){
-  digitalWrite(13,0);
-    }
+    digitalWrite(13,0);
+    allThatJunk();
+    delay(1000);
+    digitalWrite(13,1);
 
 }
+delay(200);
 }
- 
 
 int frequency(char note) 
 {
